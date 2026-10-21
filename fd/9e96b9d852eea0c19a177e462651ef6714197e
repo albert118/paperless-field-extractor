@@ -1,0 +1,178 @@
+src/paperless_field_extractor/ocr/tsv.py
+  s_b9d0a8de96f500::t_2ba830f5ae04df 1-64
+src/paperless_field_extractor/ocr/__init__.py
+  s_b9d0a8de96f500::t_9327eb5724dff0 1
+.github/workflows/ci.yml
+  s_b9d0a8de96f500::t_206ea88831a216 37-42
+  s_b9d0a8de96f500::t_5fec1b12b94807 56-58
+tests/test_client.py
+  s_b9d0a8de96f500::t_f62b1044684ec2 118,120-123
+  s_b9d0a8de96f500::t_8519188f720235 266
+  s_b9d0a8de96f500::t_5ed68dd612888f 1-117,119,124-265,267-271
+src/paperless_field_extractor/barcodes.py
+  s_b9d0a8de96f500::t_043488bb4eb4ba 1-23,26-98
+  s_b9d0a8de96f500::t_db68febb5d415c 24-25
+docs/golden-set.md
+  s_b9d0a8de96f500::t_e954efe5c6c93e 1-67
+README.md
+  s_b9d0a8de96f500::t_cb2346ec65a237 8,12-15,17,19-29,40-69,75-78,80-81,97-99,104-105
+tests/test_settings_models.py
+  s_b9d0a8de96f500::t_d8e5d7909fac02 1-18,20-35,37-59,62-98,100-102
+  s_b9d0a8de96f500::t_bf8506cbdfc97a 60-61
+  s_b9d0a8de96f500::t_ab6ab12537d7a7 19
+  s_b9d0a8de96f500::t_ba71d33e85d410 36
+  s_b9d0a8de96f500::t_bf05a72f86b611 99
+AGENTS.md
+  s_b9d0a8de96f500::t_3bb62926ad053f 15-26
+  s_b9d0a8de96f500::t_f0a0f3045ba233 70-79
+src/paperless_field_extractor/ocr/preprocess.py
+  s_b9d0a8de96f500::t_0141f23ed00c12 1-33
+src/paperless_field_extractor/probe.py
+  s_b9d0a8de96f500::t_b04afdd40370ba 147-164
+  s_b9d0a8de96f500::t_3c231e836457e8 26
+  s_b9d0a8de96f500::t_e98062a764b85f 1-25,27-146,165-276
+src/paperless_field_extractor/reasons.py
+  s_b9d0a8de96f500::t_c57d976bdfb4ae 1-65
+src/paperless_field_extractor/dates.py
+  s_b9d0a8de96f500::t_d6dfa8aa3f5704 1-146
+src/paperless_field_extractor/ocr/cache.py
+  s_b9d0a8de96f500::t_5349d130d0f6db 1-57
+tests/conftest.py
+  s_b9d0a8de96f500::t_4c57e53f50ee7f 1-93
+src/paperless_field_extractor/lines.py
+  s_b9d0a8de96f500::t_015fbd089c2067 1-28
+tests/test_dates.py
+  s_b9d0a8de96f500::t_f8f45c0ca3d3a8 1-76
+tests/test_ocr_router.py
+  s_b9d0a8de96f500::t_0e8f99cabb9cf1 130-131
+  s_b9d0a8de96f500::t_46dbd188546080 1-25,30-129,132-195,197-302
+  s_b9d0a8de96f500::t_d0aba5c3548d6e 26-29
+  s_b9d0a8de96f500::t_d8df32bcfd5bf0 196
+tests/test_probe.py
+  s_b9d0a8de96f500::t_092038185ac9f5 90-94
+  s_b9d0a8de96f500::t_fa26f10a40c14d 1-5,7-25,27-69,71-89,95-114,116-154,158-165,167-246
+  s_b9d0a8de96f500::t_24c50070b71616 70
+  s_b9d0a8de96f500::t_5acda5c1058e71 155-157
+  s_b9d0a8de96f500::t_eeba9d45777b71 166
+  s_b9d0a8de96f500::t_73f6c49ca802ce 26
+  s_b9d0a8de96f500::t_31386f740fa0f5 6
+  s_b9d0a8de96f500::t_df73ad72f72e46 115
+src/paperless_field_extractor/ocr/eml.py
+  s_b9d0a8de96f500::t_63b38a08111c05 1-108
+src/paperless_field_extractor/client.py
+  s_b9d0a8de96f500::t_0b4b1b854f69c1 1-304
+src/paperless_field_extractor/ocr/router.py
+  s_b9d0a8de96f500::t_acca5fb7b79814 144
+  s_b9d0a8de96f500::t_b5f8ef0974e147 28-33
+  s_b9d0a8de96f500::t_3e46a3aec82779 206
+  s_b9d0a8de96f500::t_1d1e099aad480d 124-137,142-143,145-156,158,177
+  s_b9d0a8de96f500::t_f582ff37e4ae02 1-21,23-27,34-123,138-141,157,159-176,178-205,207-216
+  s_b9d0a8de96f500::t_504168f23f8f4e 22
+  s_b9d0a8de96f500::t_2aece3265f45ab 217-218
+src/paperless_field_extractor/settings.py
+  s_b9d0a8de96f500::t_fcf82d223b1311 1-71
+src/paperless_field_extractor/golden.py
+  s_b9d0a8de96f500::t_4e0b33ef582d43 151-152
+  s_b9d0a8de96f500::t_001d2672e15e73 217,220-229
+  s_b9d0a8de96f500::t_657aea138e8a63 212-213,215
+  s_b9d0a8de96f500::t_10fe0aae8f2010 1-15,17-23,25-150,153-171,173-211,214,216,218-219
+  s_b9d0a8de96f500::t_e9a3766036eb22 16
+  s_b9d0a8de96f500::t_6fe554d10b4816 24
+  s_b9d0a8de96f500::t_806188a3ce12c7 172
+tests/test_ocr_parts.py
+  s_b9d0a8de96f500::t_ec42338094fa64 1-249
+  s_b9d0a8de96f500::t_421c9b6d490969 250-252
+  s_b9d0a8de96f500::t_62754ed271a5ac 253-256
+src/paperless_field_extractor/ocr/fingerprint.py
+  s_b9d0a8de96f500::t_7e1eae2a644b5e 1-115
+src/paperless_field_extractor/ocr/config.py
+  s_b9d0a8de96f500::t_6c67ed372fe51e 1-29
+tests/test_barcodes.py
+  s_b9d0a8de96f500::t_64b35a45c75389 1-56
+  s_b9d0a8de96f500::t_044a0469e1392c 57-59
+  s_b9d0a8de96f500::t_3eefb8a8fe21a4 60-61
+src/paperless_field_extractor/amounts.py
+  s_b9d0a8de96f500::t_e35c70698af5ce 1-83,95-148,154-156
+  s_b9d0a8de96f500::t_f8e26edbeaa9d9 84-94
+  s_b9d0a8de96f500::t_48e8a115cb2ef0 149-153
+src/paperless_field_extractor/currency.py
+  s_b9d0a8de96f500::t_e3f02c797a6766 1-87
+src/paperless_field_extractor/extract.py
+  s_b9d0a8de96f500::t_66f6bbc8802a09 28
+  s_b9d0a8de96f500::t_36eb183a19d07c 1-27,29-328,330-391,393-403,405-406,408-424,426-438,440-467
+  s_b9d0a8de96f500::t_d00e7324859904 392
+  s_b9d0a8de96f500::t_027f0ee8931649 329
+  s_b9d0a8de96f500::t_730746772aebed 407
+  s_b9d0a8de96f500::t_06eefd65d38cf0 439
+  s_b9d0a8de96f500::t_b38f845b4ddca8 404,425
+tests/test_currency.py
+  s_b9d0a8de96f500::t_a3f6bc758e3687 13-14
+  s_b9d0a8de96f500::t_e1632aef6b45b0 8
+  s_b9d0a8de96f500::t_d53c3a350b8f17 1-7,9-12,15-68
+tests/test_ocr_integration.py
+  s_b9d0a8de96f500::t_305cd34245162b 40-47
+  s_b9d0a8de96f500::t_61bc6fb86a097f 1-10,12-38,48-147,149-165,167-201
+  s_b9d0a8de96f500::t_388f412314357b 11
+  s_b9d0a8de96f500::t_c7d504d81dfbb4 39
+  s_b9d0a8de96f500::t_708c6a136b0c5f 148
+  s_b9d0a8de96f500::t_a379396654de4c 166
+src/paperless_field_extractor/errors.py
+  s_b9d0a8de96f500::t_39c0cc75aa31c7 1-52,59-78
+  s_b9d0a8de96f500::t_2b01b057fdfb0f 53-58
+src/paperless_field_extractor/ocr/runner.py
+  s_b9d0a8de96f500::t_35808e4c299345 1-50
+Dockerfile
+  s_b9d0a8de96f500::t_1e774ab7f4d496 14-20
+src/paperless_field_extractor/ocr/types.py
+  s_b9d0a8de96f500::t_5134969e3bee81 1-38
+src/paperless_field_extractor/cli.py
+  s_b9d0a8de96f500::t_acbb5a875919f1 1-6,11-14,16-17,20-45,51-56,60,65-76,79-86,88-129,131-265,267-318,321-349
+  s_b9d0a8de96f500::t_3bf455434abe73 319-320
+  s_b9d0a8de96f500::t_59b495c421f43c 266
+tests/test_extract.py
+  s_b9d0a8de96f500::t_3d81597273b2af 1-302,304-305,314-431
+  s_b9d0a8de96f500::t_a3a154c0fb6134 303,306-313
+tests/test_golden.py
+  s_b9d0a8de96f500::t_c1b025a6c9c17b 1-63,65,67-71,73-154
+  s_b9d0a8de96f500::t_e3a751f198445d 72
+  s_b9d0a8de96f500::t_45f50286d2e596 64,66
+tests/fakes.py
+  s_b9d0a8de96f500::t_e064b366bda21c 1-99
+src/paperless_field_extractor/models.py
+  s_b9d0a8de96f500::t_2c106897a464d9 1-90
+tests/test_cli.py
+  s_b9d0a8de96f500::t_00f3011024c75e 76
+  s_b9d0a8de96f500::t_7f9a659ad8deb8 17
+  s_b9d0a8de96f500::t_a6e729c9fc73bc 1-16,18-75,77-193,195-220,222-259,261-301
+  s_b9d0a8de96f500::t_107b25ba1aaf6d 194
+  s_b9d0a8de96f500::t_21924a0cbc0ac2 221
+  s_b9d0a8de96f500::t_97ca5c585b7415 260
+tests/test_amounts.py
+  s_b9d0a8de96f500::t_9471fed4bcd916 1-134
+  s_b9d0a8de96f500::t_f8289f6eb7aac0 135-137
+  s_b9d0a8de96f500::t_08243cc59eacc1 138-139
+.github/workflows/docker.yml
+  s_b9d0a8de96f500::t_1f4f61287d9c12 58-62
+docs/stage-0-runbook.md
+  s_b9d0a8de96f500::t_b90199c0afb167 1-107
+pyproject.toml
+  s_b9d0a8de96f500::t_852be99561ee1a 9,11
+uv.lock
+  s_b9d0a8de96f500::t_2f819aae593fe6 304,306,320,322,342-391,570-589
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fd9e96b9d852eea0c19a177e462651ef6714197e",
+  "prompts": {},
+  "sessions": {
+    "s_b9d0a8de96f500": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "513b4e1d-1b93-4dca-9966-968462d02bbe",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Albert Ferguson <albertferguson118@gmail.com>"
+    }
+  }
+}

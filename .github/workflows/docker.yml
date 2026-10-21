@@ -55,6 +55,11 @@ jobs:
             - name: Smoke test image
               run: |
                   docker run --rm paperless-field-extractor:smoke --help
+                  languages="$(docker run --rm --entrypoint tesseract paperless-field-extractor:smoke --list-langs 2>&1)"
+                  for language in eng jpn; do
+                      echo "$languages" | grep -qx "$language" || { echo "tesseract language $language missing" >&2; exit 1; }
+                  done
+                  docker run --rm --entrypoint pdftotext paperless-field-extractor:smoke -v
                   uid="$(docker run --rm --entrypoint id paperless-field-extractor:smoke -u)"
                   if [ "$uid" = "0" ]; then
                       echo "Image runs as root" >&2

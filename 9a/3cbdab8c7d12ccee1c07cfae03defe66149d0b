@@ -1,0 +1,50 @@
+src/paperless_field_extractor/review.py
+  s_b9d0a8de96f500::t_c70e6ca138db55 1-18,20-24,26,29-30,32-34,36,41-131,172-233,235-244,246,251-292,295-314
+  s_b9d0a8de96f500::t_f35413f1360ea5 132-171
+  s_b9d0a8de96f500::t_9f6aa452c90a4d 40
+  s_b9d0a8de96f500::t_541452fbd01380 234
+  s_b9d0a8de96f500::t_783c7269158262 245,247-250
+  s_b9d0a8de96f500::t_05d75f8c57a3db 293-294
+  s_b9d0a8de96f500::t_c1dd628f8ab4da 19
+  s_b9d0a8de96f500::t_7234c0882e7487 27-28
+  s_b9d0a8de96f500::t_53b6182c433cce 25,31,35,37-39
+tests/test_cli.py
+  s_b9d0a8de96f500::t_0dd25dcd4676a0 15-16
+  s_b9d0a8de96f500::t_612368cde6fac3 49-56
+  s_b9d0a8de96f500::t_190b2d5b783f3a 19
+  s_b9d0a8de96f500::t_e9673a12614d3d 196-226,229
+  s_b9d0a8de96f500::t_7138ae01cc3d77 227-228,230-232
+tests/test_review.py
+  s_b9d0a8de96f500::t_bf1285b991d352 27-28
+  s_b9d0a8de96f500::t_9fdf28a3319800 203
+  s_b9d0a8de96f500::t_e00d5e48c0ab6d 12
+  s_b9d0a8de96f500::t_7f49925909ef76 1-11,13-26,29-202,204-227
+AGENTS.md
+  s_b9d0a8de96f500::t_6f08d1f16b9678 18-19,21
+src/paperless_field_extractor/cli.py
+  s_b9d0a8de96f500::t_46c1eae6e16bf4 137-154
+  s_b9d0a8de96f500::t_d8789629ad9e66 52-60
+  s_b9d0a8de96f500::t_b9329e35882308 307-336
+  s_b9d0a8de96f500::t_c3a5b884fe3696 27
+  s_b9d0a8de96f500::t_f2e5df6110a3ff 45
+README.md
+  s_b9d0a8de96f500::t_3f44183e8e6719 27,31-33
+  s_b9d0a8de96f500::t_06640d8aa05613 15
+  s_b9d0a8de96f500::t_83e8eaa7f0c0b8 34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9a3cbdab8c7d12ccee1c07cfae03defe66149d0b",
+  "prompts": {},
+  "sessions": {
+    "s_b9d0a8de96f500": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "513b4e1d-1b93-4dca-9966-968462d02bbe",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Albert Ferguson <albertferguson118@gmail.com>"
+    }
+  }
+}

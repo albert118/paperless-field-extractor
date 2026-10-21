@@ -11,6 +11,13 @@ ENV UV_LINK_MODE=copy \
     UV_NO_DEV=1 \
     PATH="/app/.venv/bin:$PATH"
 
+# OCR tools: Tesseract (English and Japanese) for scans and photos, poppler for
+# PDF text layers and page rendering.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        tesseract-ocr tesseract-ocr-eng tesseract-ocr-jpn poppler-utils \
+    && rm -rf /var/lib/apt/lists/*
+
 # Non-root system user the tool runs as.
 RUN groupadd --system app && useradd --system --gid app app
 

@@ -34,6 +34,12 @@ jobs:
                       exit 1
                   fi
 
+            - name: Install OCR tools
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y --no-install-recommends \
+                      tesseract-ocr tesseract-ocr-eng tesseract-ocr-jpn poppler-utils
+
             - name: Install dependencies
               run: uv sync --locked
 
@@ -47,4 +53,7 @@ jobs:
               run: uv run mypy
 
             - name: Pytest
+              env:
+                  # The real-tool OCR tests must run here, never skip.
+                  REQUIRE_OCR_TOOLS: '1'
               run: uv run pytest

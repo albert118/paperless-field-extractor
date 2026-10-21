@@ -12,9 +12,18 @@ iteration.
 
 ## Current state
 
-Bootstrap only. The repository builds, lints, type-checks and tests. The CLI answers
-`--help` and `--version`. There is no Paperless client, OCR router, rules engine, review
-stage or write journal yet.
+Read-only tooling is built: a GET-only Paperless client (ported from `paperless-tax-export`,
+including origin pinning of `next` links), the Stage 0 `probe`, the OCR router, cache and
+fingerprint, barcode scanning, the rules that find a total and a date, source reconciliation,
+and the golden-set scorer. The CLI has `probe`, `ocr`, `extract`, `golden-template` and
+`evaluate`.
+
+Not built: the `custom_fields` write path, the write journal, `apply` and `review.csv`. They wait
+on the PATCH test in `docs/stage-0-runbook.md` and on a golden set that scores zero wrong values
+at ready (`docs/golden-set.md`).
+
+Currencies in scope are AUD, USD and JPY. Others (EUR, GBP, NZD, CAD, CHF, CNY) are detected and
+withheld with `unsupported-currency`.
 
 In place: `pyproject.toml` and `uv.lock` (uv, Python 3.14), `src/paperless_field_extractor/`,
 `tests/`, `Dockerfile` and `.dockerignore`, the dotfiles, `.vscode/`, `.github/` (CI, image
@@ -58,6 +67,16 @@ decisions that constrain code:
   by `sha256(original)` plus a config hash. No LLM, no cloud OCR, no guessing parsers
   (`dateparser`, `price-parser`). `Decimal` from strings only, never `float`. Dates
   compared as ISO strings, not datetimes.
+- **Never guess an ambiguous value.** `1.234`, `1234,56`, an unresolvable `$` and a numeric date that
+  reads two ways are reported with a reason and withheld. AUD and USD have two decimals, JPY none.
+  A bare `$` is AUD or USD only on evidence; a labelled total is not evidence. The `created` date
+  is never the receipt date.
+- **Fail loudly.** A missing Tesseract or poppler raises `OcrToolError`; it never becomes empty
+  text or a fallback. A fallback that hides a dead path looks like a document with no text.
+- **The client never follows a redirect off the configured origin**, and `next` links are
+  re-anchored to it, so the token cannot be sent to another host. Do not weaken either.
+- **Raw receipt data goes only to git-ignored paths.** `probe --save-raw` and
+  `golden-template` refuse a path git does not ignore. `probe.json` holds counts and ids only.
 - **Tests never touch the network.** Recorded Paperless JSON plus an injectable transport
   (`httpx.MockTransport` or equivalent).
 - **Python 3.14**, `uv` with a committed `uv.lock`, src layout, stdlib-first. Ask before

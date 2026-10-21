@@ -12,7 +12,7 @@ currency and never converted.
 
 Read-only tooling is built: a Paperless client, the Stage 0 probe, receipt text extraction
 (email, PDF, photo), the rules that find a total and a date, and a golden-set scorer.
-**Nothing writes to Paperless yet.** The `apply` stage waits on the `custom_fields` PATCH test
+**Nothing writes to Paperless yet.** `apply --dry-run` plans the writes and the review queue. The write path waits on the `custom_fields` PATCH test
 and on a golden set that scores zero wrong values at ready.
 
 ## Commands
@@ -24,8 +24,13 @@ and on a golden set that scores zero wrong values at ready.
 | `extract` | Extracts the total and date from a text file, or compares own OCR with Paperless `content` for one document and reconciles them. |
 | `golden-template` | Writes a blank `golden.csv` for the FY documents. |
 | `evaluate` | Scores extraction against `golden.csv`. Exits 4 if a wrong value is marked ready. |
+| `apply --dry-run` | Plans each empty field as `ready`, `review` or `skipped`, and writes `plan.csv` and `review.csv` under `--out-dir` (default `scratch/`, must be ignored by git). Without `--dry-run` it refuses. |
 
 All of them are read-only toward Paperless.
+
+`review.csv` has one row per document with a field in review, lowest confidence first. It lists the
+candidate from each text source, the evidence line and the reasons, and has blank `currency`,
+`amount` and `date` columns to fill in by hand. A field that already holds a value is `skipped`.
 
 ## How it reads a receipt
 

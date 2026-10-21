@@ -12,8 +12,11 @@ import pytest
 
 from paperless_field_extractor import __version__, cli
 from paperless_field_extractor.client import PaperlessClient
+from paperless_field_extractor.errors import StartupError
+from paperless_field_extractor.models import CustomFieldDef
 from paperless_field_extractor.ocr.router import OcrRouter
 from paperless_field_extractor.ocr.runner import CommandResult
+from paperless_field_extractor.review import REVIEW_COLUMNS
 from paperless_field_extractor.settings import Settings, read_token
 
 from .conftest import (
@@ -43,7 +46,14 @@ def _handler(request: httpx.Request) -> httpx.Response:
     if path == "/api/tags/":
         return json_response(page_payload([tag_payload(1, "tax deductible", 2)]))
     if path == "/api/custom_fields/":
-        return json_response(page_payload([field_payload(1, "Transaction Amount", "monetary")]))
+        return json_response(
+            page_payload(
+                [
+                    field_payload(1, "Transaction Amount", "monetary"),
+                    field_payload(4, "Transaction Date", "date"),
+                ]
+            )
+        )
     if path == "/api/documents/":
         return json_response(
             page_payload(
@@ -181,6 +191,43 @@ def test_errors_become_exit_codes_and_never_a_traceback(
     assert code == 2
     assert err.startswith("error: ")
     assert "Traceback" not in err
+
+
+def test_apply_without_dry_run_is_refused(
+    token_file: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    code = cli.main(["apply", "--token-file", str(token_file)])
+
+    assert code == 2
+    assert "--dry-run" in capsys.readouterr().err
+
+
+def test_apply_dry_run_writes_the_plan_and_review_files(
+    tmp_path: Path, token_file: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    out = tmp_path / "out"
+
+    code = cli.main(["apply", "--dry-run", "--token-file", str(token_file), "--out-dir", str(out)])
+
+    assert code == 0
+    summary = json.loads(capsys.readouterr().out.split("\nwrote ")[0])
+    assert summary["documents"] == 1
+    assert summary["amount"] == {"ready": 1, "review": 0, "skipped": 0}
+    plan = (out / "plan.csv").read_text(encoding="utf-8").splitlines()
+    assert plan[0] == "doc_id,field,outcome,currency,value,reasons"
+    assert "7,amount,ready,AUD,50.00," in plan
+    assert "7,date,ready,,2026-10-25," in plan
+    assert (out / "review.csv").read_text(encoding="utf-8").splitlines() == [
+        ",".join(REVIEW_COLUMNS)
+    ]
+
+
+def test_a_missing_custom_field_stops_apply_with_its_name() -> None:
+    fields = [CustomFieldDef(id=1, name="Transaction Amount", data_type="monetary")]
+
+    with pytest.raises(StartupError, match="No Such Field"):
+        cli._field_id(fields, "No Such Field")
+    assert cli._field_id(fields, "Transaction Amount") == 1
 
 
 def _git(directory: Path, *args: str) -> None:

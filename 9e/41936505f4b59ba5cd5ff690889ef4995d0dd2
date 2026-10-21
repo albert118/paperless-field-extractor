@@ -1,0 +1,24 @@
+README.md
+  s_b9d0a8de96f500::t_1fb396fb40f256 104
+  s_b9d0a8de96f500::t_a1c2b2361329c7 8-9
+  s_b9d0a8de96f500::t_b7ef40e058d35e 16
+AGENTS.md
+  s_b9d0a8de96f500::t_09b2b01f15bb05 22-24
+  s_b9d0a8de96f500::t_1d1cfd6982b83f 27-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9e41936505f4b59ba5cd5ff690889ef4995d0dd2",
+  "prompts": {},
+  "sessions": {
+    "s_b9d0a8de96f500": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "513b4e1d-1b93-4dca-9966-968462d02bbe",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Albert Ferguson <albertferguson118@gmail.com>"
+    }
+  }
+}

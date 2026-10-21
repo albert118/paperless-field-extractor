@@ -1,0 +1,70 @@
+src/paperless_field_extractor/probe.py
+  s_b9d0a8de96f500::t_7cba74de0947b3 28,33-34
+  s_b9d0a8de96f500::t_6f1de12e331b71 93-98,106-111
+  s_b9d0a8de96f500::t_761316f75af9b4 35
+src/paperless_field_extractor/ocr/types.py
+  s_b9d0a8de96f500::t_2c6b28083843c1 29-36
+  s_b9d0a8de96f500::t_39ab7bbe5ad627 28
+tests/test_parallel.py
+  s_b9d0a8de96f500::t_7e9c7b843f77f5 16
+  s_b9d0a8de96f500::t_33c8fcead0d12a 1-15,17-290
+  s_b9d0a8de96f500::t_040ee70a28301c 291-293
+  s_b9d0a8de96f500::t_d7b842b1401938 294-298
+src/paperless_field_extractor/ocr/parallel.py
+  s_b9d0a8de96f500::t_af2ae424f31f48 1-28
+README.md
+  s_b9d0a8de96f500::t_8bb0e2d34643ac 44-48
+AGENTS.md
+  s_b9d0a8de96f500::t_0e66e0f315ee3e 83-85
+src/paperless_field_extractor/ocr/router.py
+  s_b9d0a8de96f500::t_3738b31797995f 27
+  s_b9d0a8de96f500::t_e611be3ae6d8fc 237-244
+  s_b9d0a8de96f500::t_f63b224bf3d8ab 59-65,78-85,90-101
+  s_b9d0a8de96f500::t_e8a2bb1aa37027 20-21
+  s_b9d0a8de96f500::t_e6b9ab2fe137d6 129-136,139-141,148-154
+  s_b9d0a8de96f500::t_8e7ade9bbda1b9 177-178
+  s_b9d0a8de96f500::t_a229ecf0019083 29
+  s_b9d0a8de96f500::t_c772aea9e6f592 38
+  s_b9d0a8de96f500::t_9b58e3a445af06 155
+tests/test_probe.py
+  s_b9d0a8de96f500::t_9f7f945f93c89a 13
+  s_b9d0a8de96f500::t_707f8ef035343e 87
+  s_b9d0a8de96f500::t_bc3281e6bf5343 227-234
+  s_b9d0a8de96f500::t_f2c722bffb87a6 95-98
+tests/test_ocr_router.py
+  s_b9d0a8de96f500::t_2e583f4c432431 145-148
+src/paperless_field_extractor/ocr/cache.py
+  s_b9d0a8de96f500::t_e6fcb069daaedd 53-54,59-67
+  s_b9d0a8de96f500::t_bb79a58087bf59 13
+  s_b9d0a8de96f500::t_ad0d94fa75965a 55-57
+src/paperless_field_extractor/cli.py
+  s_b9d0a8de96f500::t_383c5002f70792 152-165,169
+  s_b9d0a8de96f500::t_54ffb2b174aee4 191-194
+  s_b9d0a8de96f500::t_6389a07a1b0328 45-46
+  s_b9d0a8de96f500::t_c83a66ec56f0c7 96
+  s_b9d0a8de96f500::t_315249f246d4f2 281-282,286-290
+  s_b9d0a8de96f500::t_467f4575b36d62 36-42
+.github/workflows/ci.yml
+  s_b9d0a8de96f500::t_2ca292936ff898 37-48,51,53,55
+src/paperless_field_extractor/ocr/config.py
+  s_b9d0a8de96f500::t_737c0c2214383f 48
+  s_b9d0a8de96f500::t_13dd91a3b28871 5,8-9,13-16,19-31,35-39,53-62
+tests/test_cli.py
+  s_b9d0a8de96f500::t_db28026187bfea 302-338
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "766cce4f010dc7e4b89b77c0551b1de76aaccdf8",
+  "prompts": {},
+  "sessions": {
+    "s_b9d0a8de96f500": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "513b4e1d-1b93-4dca-9966-968462d02bbe",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Albert Ferguson <albertferguson118@gmail.com>"
+    }
+  }
+}

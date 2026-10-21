@@ -19,11 +19,14 @@ and the golden-set scorer. The CLI has `probe`, `ocr`, `extract`, `golden-templa
 `evaluate`.
 
 Not built: the `custom_fields` write path, the write journal, `apply` and `review.csv`. They wait
-on the PATCH test in `docs/stage-0-runbook.md` and on a golden set that scores zero wrong values
-at ready (`docs/golden-set.md`).
+on the `custom_fields` PATCH test and on a golden set that scores zero wrong values at ready. The
+runbook and golden-set plan live in the owner's vault ("Receipt extractor - Stage 0 runbook" and
+"Receipt extractor - golden set plan"), not in this repository.
 
 Currencies in scope are AUD, USD and JPY. Others (EUR, GBP, NZD, CAD, CHF, CNY) are detected and
-withheld with `unsupported-currency`.
+withheld with `unsupported-currency`. Amounts stay in their native currency, recorded with the
+currency code on Paperless's monetary field. **Never convert**: no exchange rate, no AUD
+equivalent, anywhere in this tool.
 
 In place: `pyproject.toml` and `uv.lock` (uv, Python 3.14), `src/paperless_field_extractor/`,
 `tests/`, `Dockerfile` and `.dockerignore`, the dotfiles, `.vscode/`, `.github/` (CI, image

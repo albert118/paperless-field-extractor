@@ -5,14 +5,15 @@ Deterministic extraction of receipt amounts and dates into
 
 Companion to [paperless-tax-export](https://github.com/albert118/paperless-tax-export),
 which reads those custom fields to build tax CSVs. Receipts that arrive without the
-fields filled in are what this tool targets. Currencies: AUD, USD and JPY.
+fields filled in are what this tool targets. Currencies: AUD, USD and JPY, kept in their native
+currency and never converted.
 
 ## Status
 
 Read-only tooling is built: a Paperless client, the Stage 0 probe, receipt text extraction
 (email, PDF, photo), the rules that find a total and a date, and a golden-set scorer.
 **Nothing writes to Paperless yet.** The `apply` stage waits on the `custom_fields` PATCH test
-and on a golden set that scores zero wrong values at ready. See [docs](docs/).
+and on a golden set that scores zero wrong values at ready.
 
 ## Commands
 
@@ -101,5 +102,3 @@ release.
 Fixtures recorded from the live instance are sanitised before they are committed. Real
 receipts, photos and their OCR text stay out of git, under `tests/fixtures/raw/` or
 `scratch/`. The repository is public, so treat every commit as readable by anyone.
-
-Docs: [Stage 0 runbook](docs/stage-0-runbook.md), [golden set](docs/golden-set.md).

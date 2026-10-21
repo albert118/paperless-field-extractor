@@ -17,13 +17,16 @@ from __future__ import annotations
 
 import re
 import tempfile
+import threading
+from collections.abc import Sequence
 from pathlib import Path
 
 from paperless_field_extractor.lines import Line, lines_from_text
 from paperless_field_extractor.ocr.cache import OcrCache
 from paperless_field_extractor.ocr.config import OMP_THREAD_LIMIT, OcrConfig
-from paperless_field_extractor.ocr.eml import parse_eml
+from paperless_field_extractor.ocr.eml import Attachment, parse_eml
 from paperless_field_extractor.ocr.fingerprint import OcrFingerprint, collect_fingerprint
+from paperless_field_extractor.ocr.parallel import parallel_map
 from paperless_field_extractor.ocr.preprocess import prepare_image
 from paperless_field_extractor.ocr.runner import (
     CommandResult,
@@ -32,7 +35,7 @@ from paperless_field_extractor.ocr.runner import (
     run_command,
 )
 from paperless_field_extractor.ocr.tsv import parse_tsv
-from paperless_field_extractor.ocr.types import InputKind, OcrText, TextSource
+from paperless_field_extractor.ocr.types import InputKind, OcrInput, OcrText, TextSource
 
 _PAGE_NUMBER_RE = re.compile(r"-(\d+)\.png$")
 
@@ -53,7 +56,13 @@ def classify_input(mime_type: str | None, file_name: str | None, data: bytes) ->
 
 
 class OcrRouter:
-    """Reads text from receipt originals, caching by original and configuration."""
+    """Reads text from receipt originals, caching by original and configuration.
+
+    Safe to call from several threads. At most ``workers`` external tool processes
+    run at once across every thread, so parallel documents, pages and attachments
+    never oversubscribe the machine. Each Tesseract process is single-threaded, so
+    output does not depend on the worker count.
+    """
 
     def __init__(
         self,
@@ -66,13 +75,30 @@ class OcrRouter:
         self._runner = runner
         self._cache = cache
         self._fingerprint: OcrFingerprint | None = None
+        self._fingerprint_lock = threading.Lock()
+        self._workers = self._config.effective_workers()
+        self._slots = threading.BoundedSemaphore(self._workers)
+
+    @property
+    def workers(self) -> int:
+        """The most tool processes that run at once; also the width of the thread pools."""
+        return self._workers
 
     @property
     def fingerprint(self) -> OcrFingerprint:
         """The fingerprint of this configuration. Raises if Tesseract is missing."""
-        if self._fingerprint is None:
-            self._fingerprint = collect_fingerprint(self._runner, self._config)
-        return self._fingerprint
+        with self._fingerprint_lock:
+            if self._fingerprint is None:
+                self._fingerprint = collect_fingerprint(self._runner, self._config)
+            return self._fingerprint
+
+    def read_many(self, inputs: Sequence[OcrInput]) -> list[OcrText]:
+        """Read several originals in parallel. Results are in input order."""
+        return parallel_map(
+            lambda item: self.read(item.data, mime_type=item.mime_type, file_name=item.file_name),
+            inputs,
+            self._workers,
+        )
 
     def read(self, data: bytes, *, mime_type: str | None, file_name: str | None) -> OcrText:
         """Text from *data*, from the cache when this exact original and config were read."""
@@ -100,28 +126,32 @@ class OcrRouter:
 
     def _read_eml(self, data: bytes) -> OcrText:
         content = parse_eml(data)
+        readable = [
+            attachment
+            for attachment in content.attachments
+            if len(attachment.data) >= self._config.min_attachment_bytes
+            and classify_input(attachment.mime_type, attachment.file_name, attachment.data)
+            in (InputKind.PDF, InputKind.IMAGE)
+        ][: self._config.max_attachments]
+
         lines: list[Line] = list(content.lines)
         sources: list[TextSource] = [TextSource.EMAIL]
-        read = 0
-        for attachment in content.attachments:
-            if read >= self._config.max_attachments:
-                break
-            if len(attachment.data) < self._config.min_attachment_bytes:
-                continue
-            kind = classify_input(attachment.mime_type, attachment.file_name, attachment.data)
-            if kind is InputKind.PDF:
-                attachment_sources, attachment_lines = self._read_pdf(attachment.data)
-            elif kind is InputKind.IMAGE:
-                attachment_sources = (TextSource.OCR,)
-                attachment_lines = self._read_image(attachment.data)
-            else:
-                continue
-            read += 1
+        for attachment_sources, attachment_lines in parallel_map(
+            self._read_attachment, readable, self._workers
+        ):
             sources.extend(attachment_sources)
             lines.extend(attachment_lines)
         return OcrText(
             InputKind.EML, tuple(dict.fromkeys(sources)), tuple(lines), content.header_date
         )
+
+    def _read_attachment(
+        self, attachment: Attachment
+    ) -> tuple[tuple[TextSource, ...], tuple[Line, ...]]:
+        kind = classify_input(attachment.mime_type, attachment.file_name, attachment.data)
+        if kind is InputKind.PDF:
+            return self._read_pdf(attachment.data)
+        return (TextSource.OCR,), self._read_image(attachment.data)
 
     def pdf_has_text_layer(self, data: bytes) -> bool:
         """Whether a PDF carries a usable text layer. Needs ``pdftotext``, not Tesseract."""
@@ -144,10 +174,8 @@ class OcrRouter:
             layer = self._text_layer(pdf)
             if layer is not None:
                 return (TextSource.TEXT_LAYER,), lines_from_text(layer)
-            lines: list[Line] = []
-            for page in self._rasterise(pdf):
-                lines.extend(self._tesseract(page))
-            return (TextSource.OCR,), tuple(lines)
+            pages = parallel_map(self._tesseract, self._rasterise(pdf), self._workers)
+            return (TextSource.OCR,), tuple(line for page in pages for line in page)
 
     def _text_layer(self, pdf: Path) -> str | None:
         """The text layer, or ``None`` when the PDF has too little text to be one."""
@@ -206,11 +234,14 @@ class OcrRouter:
         return parse_tsv(output.decode("utf-8", errors="replace"))
 
     def _run(self, args: list[str]) -> CommandResult:
-        return self._runner(
-            args,
-            timeout=self._config.timeout_seconds,
-            env={"OMP_THREAD_LIMIT": OMP_THREAD_LIMIT},
-        )
+        # The slot is held only while the tool runs, never while waiting on other
+        # tasks, so nested pools (documents, then pages) cannot deadlock.
+        with self._slots:
+            return self._runner(
+                args,
+                timeout=self._config.timeout_seconds,
+                env={"OMP_THREAD_LIMIT": OMP_THREAD_LIMIT},
+            )
 
 
 def _page_number(path: Path) -> int:

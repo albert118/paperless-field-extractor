@@ -10,6 +10,7 @@ import httpx
 import pytest
 
 from paperless_field_extractor.errors import StartupError
+from paperless_field_extractor.ocr.config import OcrConfig
 from paperless_field_extractor.ocr.router import OcrRouter
 from paperless_field_extractor.ocr.runner import CommandResult
 from paperless_field_extractor.probe import dump_json, run_probe, select_fy_documents
@@ -83,7 +84,7 @@ def _server(
     return handler
 
 
-def _router() -> OcrRouter:
+def _router(workers: int = 0) -> OcrRouter:
     def pdftotext(args: Sequence[str]) -> CommandResult:
         return ok("ABN 12 345 678 901\nTotal $50.00 incl GST\nThank you for your custom\n")
 
@@ -91,7 +92,10 @@ def _router() -> OcrRouter:
         Path(f"{args[-1]}-1.png").write_bytes(png_bytes())
         return ok()
 
-    return OcrRouter(runner=FakeRunner({"pdftotext": pdftotext, "pdftoppm": pdftoppm}))
+    return OcrRouter(
+        runner=FakeRunner({"pdftotext": pdftotext, "pdftoppm": pdftoppm}),
+        config=OcrConfig(workers=workers),
+    )
 
 
 def _probe(**options: object) -> dict[str, object]:
@@ -218,6 +222,14 @@ def test_barcodes_are_summarised_and_the_raw_payload_stays_in_the_raw_directory(
     assert "RCPT123456" not in dump_json(report)
     raw = json.loads((tmp_path / "11" / "barcodes.json").read_text(encoding="utf-8"))
     assert raw == [{"format": "Code128", "text": "RCPT123456"}]
+
+
+def test_a_parallel_probe_gives_the_same_report_as_a_sequential_one(tmp_path: Path) -> None:
+    sequential = _probe(router=_router(1), save_raw=tmp_path / "a", scan_barcodes=True)
+    parallel = _probe(router=_router(8), save_raw=tmp_path / "b", scan_barcodes=True)
+
+    assert dump_json(parallel) == dump_json(sequential)
+    assert [p.name for p in sorted((tmp_path / "b").iterdir())] == ["10", "11", "12"]
 
 
 def test_downloading_without_a_router_is_a_programming_error(tmp_path: Path) -> None:

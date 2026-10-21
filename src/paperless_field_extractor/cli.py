@@ -33,10 +33,17 @@ from paperless_field_extractor.extract import (
     reconcile_date,
     to_jsonable,
 )
-from paperless_field_extractor.golden import Outcome, evaluate, load_golden, write_template
+from paperless_field_extractor.golden import (
+    GoldenRow,
+    Outcome,
+    evaluate,
+    load_golden,
+    write_template,
+)
 from paperless_field_extractor.lines import lines_from_text
 from paperless_field_extractor.ocr.cache import OcrCache
-from paperless_field_extractor.ocr.config import OcrConfig
+from paperless_field_extractor.ocr.config import MAX_AUTO_WORKERS, OcrConfig
+from paperless_field_extractor.ocr.parallel import parallel_map
 from paperless_field_extractor.ocr.router import OcrRouter
 from paperless_field_extractor.ocr.types import InputKind, OcrText
 from paperless_field_extractor.probe import dump_json, run_probe, select_fy_documents
@@ -86,6 +93,7 @@ def _build_parser() -> argparse.ArgumentParser:
         help="save originals and content under DIR (must be ignored by git)",
     )
     probe.add_argument("--barcodes", action="store_true", help="scan originals for barcodes")
+    _add_workers(probe)
     probe.set_defaults(handler=_probe)
 
     ocr = commands.add_parser("ocr", help="read text from one receipt original")
@@ -141,9 +149,24 @@ def _add_selection(parser: argparse.ArgumentParser, defaults: Settings) -> None:
     parser.add_argument("--fy-end", default=defaults.fy_end)
 
 
+def _add_workers(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=0,
+        metavar="N",
+        help=(
+            "tool processes to run at once; 0 (default) uses one per usable CPU core,"
+            f" up to {MAX_AUTO_WORKERS}. Set it in a container with a CPU quota."
+            " Never changes the output."
+        ),
+    )
+
+
 def _add_ocr(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--ocr-lang", default=OcrConfig().lang)
     parser.add_argument("--cache-dir", type=Path, default=Path(_DEFAULT_CACHE_DIR))
+    _add_workers(parser)
 
 
 def _settings(args: argparse.Namespace) -> Settings:
@@ -165,7 +188,10 @@ def _client(settings: Settings) -> PaperlessClient:
 def _router(args: argparse.Namespace, *, cache: bool = True) -> OcrRouter:
     directory = getattr(args, "cache_dir", None)
     return OcrRouter(
-        config=OcrConfig(lang=getattr(args, "ocr_lang", OcrConfig().lang)),
+        config=OcrConfig(
+            lang=getattr(args, "ocr_lang", OcrConfig().lang),
+            workers=getattr(args, "workers", 0),
+        ),
         cache=OcrCache(directory) if cache and directory is not None else None,
     )
 
@@ -252,13 +278,16 @@ def _golden_template(args: argparse.Namespace) -> int:
 def _evaluate(args: argparse.Namespace) -> int:
     rows, pending = load_golden(args.golden)
     router = _router(args)
-    amounts: dict[int, Outcome] = {}
-    dates: dict[int, Outcome] = {}
-    for row in rows:
+
+    def score(row: GoldenRow) -> tuple[Outcome, Outcome]:
         folder = args.raw_dir / str(row.doc_id)
         own = _read_own(router, folder) if args.source in ("ocr", "both") else None
         paperless = _read_content(folder) if args.source in ("content", "both") else None
-        amounts[row.doc_id], dates[row.doc_id] = _outcomes(own, paperless)
+        return _outcomes(own, paperless)
+
+    outcomes = parallel_map(score, rows, router.workers)
+    amounts = {row.doc_id: outcome[0] for row, outcome in zip(rows, outcomes, strict=True)}
+    dates = {row.doc_id: outcome[1] for row, outcome in zip(rows, outcomes, strict=True)}
     report = evaluate(rows, amounts, dates, pending=pending)
     print(report.render())
     if args.json is not None:

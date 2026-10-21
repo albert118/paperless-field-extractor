@@ -41,6 +41,11 @@ All of them are read-only toward Paperless.
 - **Reproducible.** Tesseract's version, the `traineddata` hashes, `--psm`, the preprocessing
   and a single OpenMP thread are recorded in an OCR fingerprint. The OCR cache is keyed by the
   original's SHA-256 and the fingerprint, so a rerun returns identical text.
+- **Parallel by default.** Documents, PDF pages and email attachments are processed in parallel,
+  with one worker per usable CPU core (at most 32; `--workers N` overrides it, which a container
+  CPU quota needs). Each Tesseract process stays single-threaded and total tool processes never
+  exceed the worker count, so output is identical at any worker count. Downloads from Paperless
+  are capped at 8 at once.
 - **Strict amounts.** AUD and USD amounts have two decimals, JPY none. A format that could be
   read two ways (`1.234`, `1234,56`) is reported as ambiguous and never guessed. Money is
   `Decimal`, never `float`.

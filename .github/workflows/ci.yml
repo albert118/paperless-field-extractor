@@ -34,11 +34,25 @@ jobs:
                       exit 1
                   fi
 
+            # The runner image pins the Ubuntu package versions, so key the cache on it:
+            # a new image gets a fresh cache instead of stale .deb files.
+            - name: Read runner image version
+              id: runner-image
+              run: echo "version=${ImageVersion:-unknown}" >> "$GITHUB_OUTPUT"
+
+            - name: Cache OCR tool packages
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: ~/apt-cache
+                  key: apt-ocr-v1-${{ runner.os }}-${{ steps.runner-image.outputs.version }}
+
             - name: Install OCR tools
               run: |
+                  mkdir -p "$HOME/apt-cache/partial"
                   sudo apt-get update
-                  sudo apt-get install -y --no-install-recommends \
+                  sudo apt-get -o Dir::Cache::archives="$HOME/apt-cache" install -y --no-install-recommends \
                       tesseract-ocr tesseract-ocr-eng tesseract-ocr-jpn poppler-utils
+                  sudo chown -R "$USER" "$HOME/apt-cache"
 
             - name: Install dependencies
               run: uv sync --locked

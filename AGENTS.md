@@ -80,6 +80,9 @@ decisions that constrain code:
   re-anchored to it, so the token cannot be sent to another host. Do not weaken either.
 - **Raw receipt data goes only to git-ignored paths.** `probe --save-raw` and
   `golden-template` refuse a path git does not ignore. `probe.json` holds counts and ids only.
+- **Parallelise across processes, never inside Tesseract.** Keep `OMP_THREAD_LIMIT=1`. Use
+  `parallel_map` and the router's worker limit for documents, pages and attachments. Worker count
+  must never change output, and it stays out of the OCR fingerprint. Results keep input order.
 - **Tests never touch the network.** Recorded Paperless JSON plus an injectable transport
   (`httpx.MockTransport` or equivalent).
 - **Python 3.14**, `uv` with a committed `uv.lock`, src layout, stdlib-first. Ask before

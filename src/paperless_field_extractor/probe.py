@@ -25,9 +25,13 @@ from paperless_field_extractor.barcodes import BarcodeHit, PayloadSummary, scan_
 from paperless_field_extractor.client import PaperlessClient
 from paperless_field_extractor.errors import StartupError
 from paperless_field_extractor.models import CustomFieldDef, Document
+from paperless_field_extractor.ocr.parallel import parallel_map
 from paperless_field_extractor.ocr.router import OcrRouter, classify_input
 from paperless_field_extractor.ocr.types import InputKind
 from paperless_field_extractor.settings import Settings
+
+# Simultaneous original-file downloads against Paperless, however many cores there are.
+MAX_DOWNLOAD_WORKERS = 8
 
 _NAME_NOISE_RE = re.compile(r"[\s_\-]+")
 _IMAGE_SUFFIXES = frozenset({".jpg", ".jpeg", ".png", ".tif", ".tiff", ".webp", ".bmp", ".heic"})
@@ -86,10 +90,12 @@ def run_probe(
             include_content=True,
         )
 
-    per_document: list[dict[str, Any]] = []
-    barcode_summaries: list[list[PayloadSummary]] = []
-    for document in documents:
-        entry, summaries = _probe_document(
+    # Downloads and tool runs go in parallel, in document order. The router bounds
+    # how many tool processes run at once; downloads are capped separately so a
+    # many-core host does not hammer Paperless.
+    pool = min(router.workers, MAX_DOWNLOAD_WORKERS) if router is not None and download else 1
+    results = parallel_map(
+        lambda document: _probe_document(
             client,
             document,
             amount_field,
@@ -97,10 +103,12 @@ def run_probe(
             router=router if download else None,
             save_raw=save_raw,
             scan_barcodes=scan_barcodes,
-        )
-        per_document.append(entry)
-        if summaries is not None:
-            barcode_summaries.append(summaries)
+        ),
+        documents,
+        pool,
+    )
+    per_document = [entry for entry, _ in results]
+    barcode_summaries = [summaries for _, summaries in results if summaries is not None]
 
     return {
         "checked_at": checked_at,

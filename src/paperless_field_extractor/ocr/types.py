@@ -26,6 +26,15 @@ class TextSource(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
+class OcrInput:
+    """One original to read."""
+
+    data: bytes
+    mime_type: str | None
+    file_name: str | None
+
+
+@dataclass(frozen=True, slots=True)
 class OcrText:
     """Text read from one original, with how it was read."""
 

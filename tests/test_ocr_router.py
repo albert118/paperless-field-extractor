@@ -142,7 +142,10 @@ def test_a_scanned_pdf_is_rasterised_then_ocred_page_by_page_in_numeric_order(
 ) -> None:
     rig = _Rig(tmp_path, layer="  \n \n", pages=12)
 
-    text = rig.router(tmp_path).read(b"%PDF-1.7", mime_type="application/pdf", file_name="r.pdf")
+    # One worker, so the order tools are called in is the order pages are read.
+    text = rig.router(tmp_path, config=OcrConfig(workers=1)).read(
+        b"%PDF-1.7", mime_type="application/pdf", file_name="r.pdf"
+    )
 
     assert text.sources == (TextSource.OCR,)
     assert rig.runner.count("pdftoppm") == 1

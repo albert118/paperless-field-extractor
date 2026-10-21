@@ -299,3 +299,40 @@ def test_an_unpinned_fingerprint_warns_that_results_are_not_reproducible(
     assert cli.main(["ocr", "--file", str(image)]) == 0
 
     assert "not fully pinned" in capsys.readouterr().err
+
+
+def test_the_workers_flag_reaches_the_router_and_defaults_to_automatic(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import argparse
+    import os
+
+    monkeypatch.undo()  # use the real _router, not the offline fake
+    monkeypatch.setattr(os, "process_cpu_count", lambda: 12)
+
+    explicit = cli._router(argparse.Namespace(workers=5, ocr_lang="eng", cache_dir=None))
+    automatic = cli._router(argparse.Namespace(workers=0, ocr_lang="eng", cache_dir=None))
+
+    assert (explicit.workers, automatic.workers) == (5, 12)
+
+
+def test_a_negative_workers_value_is_a_usage_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.undo()
+    image = tmp_path / "r.png"
+    image.write_bytes(png_bytes())
+
+    code = cli.main(["ocr", "--file", str(image), "--workers", "-1"])
+
+    assert code == 2
+    assert "workers must be" in capsys.readouterr().err
+
+
+def test_help_describes_the_workers_flag(capsys: pytest.CaptureFixture[str]) -> None:
+    with pytest.raises(SystemExit):
+        cli.main(["probe", "--help"])
+
+    out = " ".join(capsys.readouterr().out.split())
+    assert "--workers" in out
+    assert "one per usable CPU core" in out

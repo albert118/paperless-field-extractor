@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import threading
 from pathlib import Path
 
 from paperless_field_extractor.lines import Line
@@ -49,9 +50,21 @@ class OcrCache:
             "header_date": text.header_date,
         }
         path = self._path(key)
-        temporary = path.with_suffix(".tmp")
+        if path.exists():
+            return  # entries are content-addressed: the same key always holds the same text
+        # A name unique to this thread, so two threads storing the same original at
+        # once never share a temporary file.
+        temporary = path.with_name(f"{path.name}.{os.getpid()}.{threading.get_ident()}.tmp")
         temporary.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
-        os.replace(temporary, path)
+        try:
+            os.replace(temporary, path)
+        except OSError:
+            # Windows refuses to replace a file another thread is replacing. If the
+            # entry now exists, that writer stored the identical text; otherwise the
+            # failure is real.
+            temporary.unlink(missing_ok=True)
+            if not path.exists():
+                raise
 
     def _path(self, key: str) -> Path:
         return self._directory / f"{key}.json"

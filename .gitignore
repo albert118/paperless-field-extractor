@@ -1,0 +1,120 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[codz]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib
+lib64
+parts/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.junit/
+junit/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py.cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# UV
+#   uv.lock is committed for reproducibility.
+
+# Environments
+.env
+.envrc
+.venv
+.venv*/
+virtualenv/
+virtualenvs/
+.virtualenv/
+bin/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Local python venv config
+pyvenv.cfg
+
+# local dev config
+.config.local.ini
+
+# ---------------------------------------------------------------------------
+# Project: paperless-field-extractor
+# ---------------------------------------------------------------------------
+
+# Secrets. The Paperless API token is never committed: no token file, no .env
+# with real values. Local runs read it from secrets/, the container from a
+# mounted secret file.
+secrets/
+*.token
+paperless-token*.txt
+
+# Generated output: review.csv, dry-run reports and the write journal. The
+# journal is the only audit trail of machine-written values and holds receipt
+# data, so it is never committed.
+output/
+*.journal
+*.journal.*
+
+# OCR cache keyed by sha256(original) + config hash. Derived from real receipts.
+.ocr-cache/
+ocr-cache/
+
+# Recorded data that has not been sanitised. Real receipts, photos and their
+# OCR text stay out of git; sanitised fixtures live in tests/fixtures/.
+tests/fixtures/raw/
+scratch/
+
+# Tool caches
+.ruff_cache/

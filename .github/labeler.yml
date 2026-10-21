@@ -1,0 +1,26 @@
+bug:
+    - head-branch: ['^bug']
+
+documentation:
+    - changed-files:
+          - any-glob-to-any-file: ['**/*.md']
+
+housekeeping:
+    - changed-files:
+          - any-glob-to-any-file: ['.gitignore', '.gitattributes', '.editorconfig', '.python-version', 'ruff.toml', '.ruff.toml', 'mypy.ini', 'LICENSE']
+
+infrastructure:
+    - changed-files:
+          - any-glob-to-any-file: ['Dockerfile*', '.dockerignore', 'compose*.yml', '.github/**']
+
+enhancement:
+    - changed-files:
+          - any-glob-to-any-file: ['src/**', 'packages/*/src/**']
+
+tests:
+    - changed-files:
+          - any-glob-to-any-file: ['tests/**', 'packages/*/tests/**']
+
+dependencies:
+    - changed-files:
+          - any-glob-to-any-file: ['pyproject.toml', 'uv.lock']

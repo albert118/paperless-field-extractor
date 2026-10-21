@@ -1,0 +1,22 @@
+changelog:
+    categories:
+        - title: 🎉 New features
+          labels:
+              - enhancement
+        - title: 🐞 Bug fixes
+          labels:
+              - bug
+        - title: ⚙️ Infrastructure
+          labels:
+              - infrastructure
+        - title: 🏡 Housekeeping and dependencies
+          labels:
+              - housekeeping
+              - dependencies
+              - tests
+        - title: 📃 Documentation
+          labels:
+              - documentation
+        - title: Other changes
+          labels:
+              - '*'

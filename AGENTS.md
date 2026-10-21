@@ -15,10 +15,10 @@ iteration.
 Read-only tooling is built: a GET-only Paperless client (ported from `paperless-tax-export`,
 including origin pinning of `next` links), the Stage 0 `probe`, the OCR router, cache and
 fingerprint, barcode scanning, the rules that find a total and a date, source reconciliation,
-and the golden-set scorer. The CLI has `probe`, `ocr`, `extract`, `golden-template` and
-`evaluate`.
+and the golden-set scorer. The CLI has `probe`, `ocr`, `extract`, `golden-template`, `evaluate`
+and `apply --dry-run` (plan and `review.csv`, no writes).
 
-Not built: the `custom_fields` write path, the write journal, `apply` and `review.csv`. They wait
+Not built: the `custom_fields` write path, the write journal and `apply --from-review`. They wait
 on the `custom_fields` PATCH test and on a golden set that scores zero wrong values at ready. The
 runbook and golden-set plan live in the owner's vault ("Receipt extractor - Stage 0 runbook" and
 "Receipt extractor - golden set plan"), not in this repository.

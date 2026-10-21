@@ -24,6 +24,7 @@ from paperless_field_extractor.errors import (
     EXIT_OK,
     ExtractorError,
     SettingsError,
+    StartupError,
 )
 from paperless_field_extractor.extract import (
     Extraction,
@@ -41,12 +42,22 @@ from paperless_field_extractor.golden import (
     write_template,
 )
 from paperless_field_extractor.lines import lines_from_text
+from paperless_field_extractor.models import CustomFieldDef
 from paperless_field_extractor.ocr.cache import OcrCache
 from paperless_field_extractor.ocr.config import MAX_AUTO_WORKERS, OcrConfig
 from paperless_field_extractor.ocr.parallel import parallel_map
 from paperless_field_extractor.ocr.router import OcrRouter
 from paperless_field_extractor.ocr.types import InputKind, OcrText
 from paperless_field_extractor.probe import dump_json, run_probe, select_fy_documents
+from paperless_field_extractor.review import (
+    PLAN_COLUMNS,
+    REVIEW_COLUMNS,
+    plan_documents,
+    plan_rows,
+    review_rows,
+    summarise,
+    write_csv,
+)
 from paperless_field_extractor.settings import Settings, read_token
 
 _DEFAULT_CACHE_DIR = ".ocr-cache"
@@ -122,6 +133,24 @@ def _build_parser() -> argparse.ArgumentParser:
     template.add_argument("--out", type=Path, default=Path("scratch/golden.csv"))
     template.add_argument("--force", action="store_true")
     template.set_defaults(handler=_golden_template)
+
+    apply = commands.add_parser(
+        "apply",
+        help="plan the field writes and the review queue (dry run only for now)",
+        description=(
+            "Plan what would be written to empty fields, and queue the rest for review."
+            " Writes plan.csv and review.csv under --out-dir (must be ignored by git)."
+            " Nothing is written to Paperless."
+        ),
+    )
+    apply.add_argument(
+        "--dry-run", action="store_true", help="required: the write path is not built yet"
+    )
+    _add_connection(apply, defaults)
+    _add_selection(apply, defaults)
+    apply.add_argument("--out-dir", type=Path, default=Path("scratch"))
+    _add_ocr(apply)
+    apply.set_defaults(handler=_apply)
 
     score = commands.add_parser("evaluate", help="score extraction against the golden set")
     score.add_argument("--golden", type=Path, default=Path("scratch/golden.csv"))
@@ -273,6 +302,36 @@ def _golden_template(args: argparse.Namespace) -> int:
     write_template(args.out, (document.id for document in documents), force=args.force)
     print(f"wrote {args.out} with {len(documents)} blank rows")
     return EXIT_OK
+
+
+def _apply(args: argparse.Namespace) -> int:
+    if not args.dry_run:
+        raise SettingsError("apply only supports --dry-run: the write path is not built yet")
+    _require_ignored(args.out_dir)
+    settings = _settings(args)
+    router = _router(args)
+    with _client(settings) as client:
+        fields = client.list_custom_fields()
+        amount_field = _field_id(fields, settings.field_amount)
+        date_field = _field_id(fields, settings.field_date)
+        documents = select_fy_documents(client, settings, include_content=True)
+        plans = plan_documents(
+            client, router, documents, amount_field_id=amount_field, date_field_id=date_field
+        )
+    write_csv(args.out_dir / "plan.csv", PLAN_COLUMNS, plan_rows(plans))
+    write_csv(args.out_dir / "review.csv", REVIEW_COLUMNS, review_rows(plans, settings.base_url))
+    summary = summarise(plans)
+    print(json.dumps(summary, indent=2))
+    print(f"wrote {args.out_dir / 'plan.csv'} and {args.out_dir / 'review.csv'} (dry run)")
+    _warn_if_unpinned(router)
+    return EXIT_OK
+
+
+def _field_id(fields: Sequence[CustomFieldDef], name: str) -> int:
+    for field in fields:
+        if field.name == name:
+            return field.id
+    raise StartupError(f"custom field {name!r} does not exist (or the token cannot see it)")
 
 
 def _evaluate(args: argparse.Namespace) -> int:

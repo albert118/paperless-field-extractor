@@ -1,0 +1,63 @@
+.github/pull_request_template.md
+  s_b9d0a8de96f500::t_aad5adce17010d 1-25
+Dockerfile
+  s_b9d0a8de96f500::t_4fcb07faa78df7 1-33
+pyproject.toml
+  s_b9d0a8de96f500::t_03961e8eb8fe98 1-41
+.github/workflows/docker.yml
+  s_b9d0a8de96f500::t_efb4c36d1b56ff 1-75
+.github/labeler.yml
+  s_b9d0a8de96f500::t_1ebb93484df526 1-26
+.github/release-notes-template.md
+  s_b9d0a8de96f500::t_50548ae76778a4 1-34
+src/paperless_field_extractor/__init__.py
+  s_b9d0a8de96f500::t_061f8664ee1426 1-3
+README.md
+  s_b9d0a8de96f500::t_8beb0591a391cb 1-79
+.gitattributes
+  s_b9d0a8de96f500::t_448861a47f058c 1-8
+AGENTS.md
+  s_b9d0a8de96f500::t_3a03aeae306c92 1-71
+.gitignore
+  s_b9d0a8de96f500::t_554bd6c0078d1f 1-120
+src/paperless_field_extractor/cli.py
+  s_b9d0a8de96f500::t_5a68534fbd8c41 1-31
+tests/test_smoke.py
+  s_b9d0a8de96f500::t_328f601fdec1f9 1-21
+.dockerignore
+  s_b9d0a8de96f500::t_32e2cd5e5420bc 1-23
+.editorconfig
+  s_b9d0a8de96f500::t_c553d7fe593e96 1-16
+.github/dependabot.yml
+  s_b9d0a8de96f500::t_c5b5c168ef8ff5 1-37
+.github/release.yml
+  s_b9d0a8de96f500::t_fd3debdbf57541 1-22
+.github/workflows/ci.yml
+  s_b9d0a8de96f500::t_9cd47b26aa5b4c 1-50
+.github/workflows/labeler.yml
+  s_b9d0a8de96f500::t_11db6d5183965c 1-18
+.python-version
+  s_b9d0a8de96f500::t_c8f0a37601323b 1
+.vscode/extensions.json
+  s_b9d0a8de96f500::t_aaaa7c1969c5ca 1-8
+.vscode/settings.json
+  s_b9d0a8de96f500::t_3d3d1f9f3be263 1-17
+uv.lock
+  s_b9d0a8de96f500::t_475c3a23914fe1 1-515
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d57b674ad6222cfd00224a0788f42ef06535f436",
+  "prompts": {},
+  "sessions": {
+    "s_b9d0a8de96f500": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "513b4e1d-1b93-4dca-9966-968462d02bbe",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Albert Ferguson <albertferguson118@gmail.com>"
+    }
+  }
+}
